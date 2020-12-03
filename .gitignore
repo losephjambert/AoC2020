@@ -2,3 +2,4 @@ inputCache/**
 out/**
 node_modules/**
 authCookie.ts
+.DS_Store
