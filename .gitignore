@@ -1,0 +1,4 @@
+inputCache/**
+out/**
+node_modules/**
+authCookie.ts
