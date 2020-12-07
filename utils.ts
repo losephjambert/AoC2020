@@ -6,18 +6,25 @@ import { AOC_AUTH_COOKIE } from "./authCookie";
 
 export const transformIdentity = (i: string[]) => i;
 export const transformNumber = (i: string[]) => i.map((n) => Number(n));
-export const transfromNumberList = (i: string[]) =>
+export const transformNumberList = (i: string[]) =>
   i.map((al) => transformNumber(al.split(",")));
-export function readInput<T>(
-  year: string,
-  day: string,
-  transform: (i: string[]) => T
-): T {
+
+export function getRawInput(year: string, day:string): string {
   let rawInput = readInputFromCache(day, year);
   if (rawInput == null) {
     rawInput = readInputFromWeb(day, year);
     writeInputToCache(day, year, rawInput);
   }
+  return rawInput;
+}
+
+export function readInput<T>(
+  year: string,
+  day: string,
+  transform?: (i: string[]) => T
+): T {
+  const rawInput = getRawInput(year, day);
+
   return transform(
     rawInput.split("\n").filter((l, i, a) => {
       if (l.length === 0) {
