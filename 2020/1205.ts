@@ -1,3 +1,4 @@
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from "constants";
 import { readInput, transformIdentity } from "../utils";
 const input = readInput("2020", "5", transformIdentity);
 
@@ -93,14 +94,19 @@ const createSeatMap = (input: string[]): { [key: string]: number[] } => {
 
 const findMySeatId = (input: string[]): number => {
   const seatMap = createSeatMap(input);
+  const ids = [];
   for (const row in seatMap) {
     const seatRow = seatMap[row];
     const isEmpty = (list: any[]) => !Object.keys(list).length;
-    const isMissingASeat = (list: any[]) => list.some(item => !!item);
-    if (!isEmpty(seatRow) && seatRow.length === 5) {
-      console.log(seatRow);
+    if (!isEmpty(seatRow)) {
+      console.log(seatRow, row);
+      const filtered = seatRow.filter(item => item != null)
+      ids.push(...filtered)
     }
   }
+
+  console.log(ids);
+
   return 0;
 };
 
