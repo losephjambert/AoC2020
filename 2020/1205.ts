@@ -28,15 +28,6 @@ Every seat also has a unique seat ID: multiply the row by 8, then add the column
 **/
 
 /** */
-// const rows = new Array<number[]>(128);
-// const column = new Array<number>(8);
-
-// for(let i = 0; i < column.length; i++) {
-//   column[i] = 0;
-// }
-// for(let i = 0; i < rows.length; i++) {
-//   rows[i] = column;
-// }
 
 const seatSearchMap = {
   F: (start: number, end: number) => [start, Math.floor((start+end)/2)],
@@ -46,8 +37,10 @@ const seatSearchMap = {
 }
 
 // BFFFBBFRRR: row 70, column 7, seat ID 567.
-const testInput = 'BFFFBBFRRR';
+// FFFBBBFRRR: row 14, column 7, seat ID 119.
+// BBFFBBFRLL: row 102, column 4, seat ID 820.
 
+const testInputs = ['BFFFBBFRRR', 'FFFBBBFRRR', 'BBFFBBFRLL'];
 const processSingleInput = (input: string, start: number, end: number): number[] => seatSearchMap[input](start, end);
 const processSeatCode = (input: string, min: number, max: number) => {
   for(let i = 0; i < input.length; i++) {
@@ -63,15 +56,54 @@ const processSeatCode = (input: string, min: number, max: number) => {
 
   return;
 }
-const findSeatId = (input: string): number => {
+const findSeatId = (row: number, col: number): number => {
+  return (row * 8) + col;
+};
+
+const findSeatLocation = (input: string): number[] => {
   const rows = input.slice(0, input.length - 3);
   const cols = input.slice(input.length - 3);
   const row = processSeatCode(rows, 0, 127);
   const col = processSeatCode(cols, 0, 7);
-  const seatId = (row * 8) + col;
-  return seatId;
+  return [row, col];
+}
+
+const seatIds = input.map(id => {
+  const [row, col] = findSeatLocation(id);
+  return findSeatId(row, col);
+});
+const highestSeatId = seatIds.sort((a,b) => b - a)[0];
+// console.log(highestSeatId);
+
+// Part Two
+const createSeatMap = (input: string[]): { [key: string]: number[] } => {
+  const seatMap = {};
+  for (let i = 0; i < 128; i++) {
+    seatMap[i] = new Array(8);
+  }
+
+  input.forEach(boardingPass => {
+    const [row, col] = findSeatLocation(boardingPass);
+    const seatId = findSeatId(row, col)
+    seatMap[row][col] = seatId;
+  });
+
+  return seatMap;
 };
 
-const seatIds = input.map(id => findSeatId(id));
-const highestSeatId = seatIds.sort((a,b) => b - a)[0];
-console.log(highestSeatId);
+const findMySeatId = (input: string[]): number => {
+  const seatMap = createSeatMap(input);
+  for (const row in seatMap) {
+    const seatRow = seatMap[row];
+    const isEmpty = (list: any[]) => !Object.keys(list).length;
+    const isMissingASeat = (list: any[]) => list.some(item => !!item);
+    if (!isEmpty(seatRow) && seatRow.length === 5) {
+      console.log(seatRow);
+    }
+  }
+  return 0;
+};
+
+findMySeatId(input);
+
+console.log(findSeatId(69,7));
